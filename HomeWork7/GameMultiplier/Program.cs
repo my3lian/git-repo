@@ -29,7 +29,7 @@ namespace GameMultiplier
         {
 
             Random rnd = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
-            multiplier = new Multiplier(rnd.Next(10, 28), 3);
+            multiplier = new Multiplier(rnd.Next(10, 30), 3);
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
