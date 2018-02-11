@@ -17,6 +17,11 @@ namespace HomeWork7
             Application.Run(gw);
         }
 
+
+        void CreateMainWindow()
+        {
+
+        }
     }
 
     class GameWindow : Form {
