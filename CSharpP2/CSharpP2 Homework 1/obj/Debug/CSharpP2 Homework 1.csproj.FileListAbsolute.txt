@@ -1,0 +1,7 @@
+C:\Users\Илья\source\repos\CSharpP2 Homework 1\CSharpP2 Homework 1\obj\Debug\CSharpP2 Homework 1.csproj.CoreCompileInputs.cache
+C:\Users\Илья\source\repos\CSharpP2 Homework 1\CSharpP2 Homework 1\bin\Debug\CSharpP2 Homework 1.exe.config
+C:\Users\Илья\source\repos\CSharpP2 Homework 1\CSharpP2 Homework 1\bin\Debug\CSharpP2 Homework 1.exe
+C:\Users\Илья\source\repos\CSharpP2 Homework 1\CSharpP2 Homework 1\bin\Debug\CSharpP2 Homework 1.pdb
+C:\Users\Илья\source\repos\CSharpP2 Homework 1\CSharpP2 Homework 1\obj\Debug\CSharpP2 Homework 1.exe
+C:\Users\Илья\source\repos\CSharpP2 Homework 1\CSharpP2 Homework 1\obj\Debug\CSharpP2 Homework 1.pdb
+C:\Users\Илья\source\repos\CSharpP2 Homework 1\CSharpP2 Homework 1\obj\Debug\CSharpP2 Homework 1.csprojResolveAssemblyReference.cache
