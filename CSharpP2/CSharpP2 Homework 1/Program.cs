@@ -28,8 +28,6 @@ namespace CSharpP2_Homework_1
         static void Main(string[] args)
         {
 
-            try
-            {
                 form = new Form();
                 form.Size = new Size(800, 600);
                 CSharpP2_Homework_1.SplashScreen.Init(form);
@@ -38,12 +36,7 @@ namespace CSharpP2_Homework_1
                 CSharpP2_Homework_1.SplashScreen.Draw();
 
                 Application.Run();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                Console.ReadLine();
-            }
+            
 
         }
 

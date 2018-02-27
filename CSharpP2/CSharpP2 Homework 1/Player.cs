@@ -13,8 +13,24 @@ namespace CSharpP2_Homework_1
     {
         const int MAXSPEED = 50;
         protected int MoveSpeed;
-        static bool reloaded;
-        Timer reloader;
+
+        public Point WeaponSlot {
+            get
+            {
+                return new Point(Pos.X + Size.Width, Pos.Y + Size.Height / 2);
+            }
+        }
+
+
+        public Weapon Weapon { get; private set; }
+
+        public Action Shoot { private get; set; }
+        public int Energy { get; private set; }
+
+        public void EnergyLow(int n) => Energy += n;
+        public void EnergyAdd(int n) => Energy += n;
+
+        public Armory Armory { get; private set; }
 
         public Player()
         { 
@@ -22,15 +38,21 @@ namespace CSharpP2_Homework_1
             Size = new Size(96, 58);
             MoveSpeed = 10;
             Image = Resources.PlayerSkins[Game.rnd.Next(0, Resources.PlayerSkins.Count)];
+            Armory = new Armory();
+            Weapon = Armory.Weapons[WeaponTypes.Laser];
+            Weapon.WeaponHolder = this;
+            ChangeWeapon();
 
-            reloader = new Timer { Interval = 1000 };
-            reloader.Start();
-            reloader.Tick += Reload;
         }
 
-        private void Reload(object sender, EventArgs e)
+        public void ChangeWeapon()
         {
-            reloaded = true;
+            Shoot += Weapon.Shoot;
+        }
+
+        public void AttachWeaponToSlot()
+        {
+
         }
 
         public override void Draw()
@@ -59,15 +81,9 @@ namespace CSharpP2_Homework_1
 
         }
 
-        public void Shoot (object sender, MouseEventArgs e)
+        public void ShootCurrentWeapon (object sender, MouseEventArgs e)
         {
-            if (reloaded)
-            {
-               // Game.projectile = new Projectile(new Point(Pos.X, Pos.Y + Size.Height/2), Point.Empty, new Size(10, 10), "Laser_Red.png");
-               Game.AddObjects(new Projectile(new Point(Pos.X, Pos.Y), Point.Empty, new Size(10, 10)));
-               Game.AddObjects(new Projectile(new Point(Pos.X, Pos.Y+Size.Height), Point.Empty, new Size(10, 10)));
-               reloaded = false;
-            }
+            Shoot();
         }
     }
 }

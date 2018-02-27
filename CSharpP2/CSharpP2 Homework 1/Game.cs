@@ -69,9 +69,7 @@ namespace CSharpP2_Homework_1
             Buffer = _context.Allocate(g, new Rectangle(0, 0, Width, Height));
             Load();
 
-
-
-            form.MouseDown += player.Shoot;
+            form.MouseDown += player.ShootCurrentWeapon;
 
             timer = new Timer { Interval = 10 };
             timer.Start();
@@ -174,15 +172,7 @@ namespace CSharpP2_Homework_1
         /// </summary>
         static void ClearObjects()
         {
-            for(int i = 0; i < gameObjects.Count; i++)
-            {
-                if (gameObjects[i].Destroyed)
-                {
-                    gameObjects[i].Dispose();
-                    gameObjects.Remove(gameObjects[i]);
-                    
-                }    
-            }
+            gameObjects.RemoveAll(x=>x.Destroyed);
         }
 
         /// <summary>

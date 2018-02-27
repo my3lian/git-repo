@@ -54,7 +54,10 @@ namespace CSharpP2_Homework_1
             Size = size;
         }
 
-
+        public Point GetPosition()
+        {
+            return Pos;
+        }
         /// <summary>
         /// Отрисовка объекта
         /// </summary>
@@ -143,25 +146,55 @@ namespace CSharpP2_Homework_1
     /// <summary>
     /// Класс реализующий объект "Снаряд"
     /// </summary>
-    class Projectile : GameObject
+    class Projectile : GameObject, ICloneable
     {
-        int speed;
-
-        public Projectile(Point pos, Point dir, Size size) : base(pos, dir, size)
+        public int Speed { get; set; }
+        Weapon weapon;
+        public Weapon Weapon
         {
-            speed = 50;
+            get
+            {
+                return weapon;
+            }
+            set
+            {
+                weapon = value;
+                Pos = weapon.Pos;
+            }
+        }
+
+        public Projectile(int speed, Size size, Image image)
+        {
+            Speed = speed;
+            Size = new Size(50, 10);
+            Image = image; //Resources.LaserSkins[Game.rnd.Next(0, Resources.LaserSkins.Count)];
+        }
+
+        public void AttachToWeapon(Weapon weapon)
+        {
+            Weapon = weapon;
         }
 
         public override void Draw()
         {
-            Game.Buffer.Graphics.DrawLine(new Pen(Color.White, 2), Pos, new Point(Pos.X + 10, Pos.Y));
-            //Game.Buffer.Graphics.DrawImage(Image, Pos.X, Pos.Y, Size.Width, Size.Height);
+            //Game.Buffer.Graphics.DrawLine(new Pen(Color.White, 2), Pos, new Point(Pos.X + 10, Pos.Y));
+            Game.Buffer.Graphics.DrawImage(Image, Pos.X, Pos.Y, Size.Width, Size.Height);
         }
 
         public override void Update()
         {
-            Pos.X = Pos.X + speed;
+            Pos.X = Pos.X + Speed;
             if (Pos.X > Game.Width) destroyed = true;
+        }
+
+        public object Clone()
+        {
+            return new Projectile(this.Speed, this.Size, this.Image);
+        }
+
+        public void SetPos(Point pos)
+        {
+            Pos = pos;
         }
     }
 
@@ -198,6 +231,9 @@ namespace CSharpP2_Homework_1
         {
             Pos.X = Pos.X - Dir.X;
             if (Pos.X < -Size.Width) destroyed = true;
+            int o = 10;
+            o--;
+            o = o - 1;
         }
     }
 }
