@@ -19,7 +19,10 @@ namespace CSharpP2_Homework_1
 {
     public class Program
     {
-        static Form form;
+        public static Form form;
+        private static Game game;
+
+        internal static Game Game { get => game; private set => game = value; }
 
         /// <summary>
         /// Точка входа в программу
@@ -28,14 +31,15 @@ namespace CSharpP2_Homework_1
         static void Main(string[] args)
         {
 
-                form = new Form();
-                form.Size = new Size(800, 600);
-                CSharpP2_Homework_1.SplashScreen.Init(form);
+            form = new Form();
+            form.Size = new Size(800, 600);
+            
+            CSharpP2_Homework_1.SplashScreen.Init(form);
+            Game = new Game();
+            form.Show();
+            CSharpP2_Homework_1.SplashScreen.Draw();
 
-                form.Show();
-                CSharpP2_Homework_1.SplashScreen.Draw();
-
-                Application.Run();
+            Application.Run();
             
 
         }

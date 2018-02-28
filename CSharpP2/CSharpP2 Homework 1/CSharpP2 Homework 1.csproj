@@ -45,6 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Armory.cs" />
+    <Compile Include="IDroper.cs" />
+    <Compile Include="IEnemy.cs" />
     <Compile Include="WeaponTypes.cs" />
     <Compile Include="GameObjectException.cs" />
     <Compile Include="ICollision.cs" />

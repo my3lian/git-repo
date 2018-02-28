@@ -11,8 +11,17 @@ namespace CSharpP2_Homework_1
 {
     class Player : GameObject
     {
+        public event Action EnergyChanged;
+
         const int MAXSPEED = 50;
         protected int MoveSpeed;
+        bool isImmortal = false;
+        public int MaxEnergy { get; private set; }
+
+        public bool isVisible = true;
+
+        Timer visibility = new Timer { Interval = 100 };
+        Timer immortal = new Timer { Interval = 3000 };
 
         public Point WeaponSlot {
             get
@@ -21,13 +30,35 @@ namespace CSharpP2_Homework_1
             }
         }
 
-
         public Weapon Weapon { get; private set; }
 
         public Action Shoot { private get; set; }
         public int Energy { get; private set; }
 
-        public void EnergyLow(int n) => Energy += n;
+        public void Hurt(int n)
+        {
+            if (!isImmortal)
+            {
+                SetImmortality();
+                Energy = Energy < 0 ? Energy - n : 0;
+                EnergyChanged();
+            }
+        }
+
+        public void Heal(int n)
+        {
+            Energy = Energy < MaxEnergy ? Energy + n : 0;
+            EnergyChanged();
+        }
+
+        public void SetImmortality()
+        {
+            Console.WriteLine("Бессмертие активировано");
+            isImmortal = true;
+            immortal.Start();
+            visibility.Start();
+        }
+
         public void EnergyAdd(int n) => Energy += n;
 
         public Armory Armory { get; private set; }
@@ -37,12 +68,31 @@ namespace CSharpP2_Homework_1
             Pos = new Point(100, 100);
             Size = new Size(96, 58);
             MoveSpeed = 10;
-            Image = Resources.PlayerSkins[Game.rnd.Next(0, Resources.PlayerSkins.Count)];
+            MaxEnergy = 100;
+            Energy = MaxEnergy;
+            Image = Resources.PlayerSkins[GameForm.Rnd.Next(0, Resources.PlayerSkins.Count)];
             Armory = new Armory();
             Weapon = Armory.Weapons[WeaponTypes.Laser];
             Weapon.WeaponHolder = this;
             ChangeWeapon();
+            Program.form.MouseDown += ShootCurrentWeapon;
 
+            immortal.Tick += ResetImmortality;
+            visibility.Tick += SetVisibility;
+        }
+
+        private void SetVisibility(object sender, EventArgs e)
+        {
+            isVisible = !isVisible;
+        }
+
+        private void ResetImmortality(object sender, EventArgs e)
+        {
+            Console.WriteLine("Бессмертие закончилось");
+            immortal.Stop();
+            visibility.Stop();
+            isVisible = true;
+            isImmortal = false;
         }
 
         public void ChangeWeapon()
@@ -57,27 +107,17 @@ namespace CSharpP2_Homework_1
 
         public override void Draw()
         {
-            Game.Buffer.Graphics.DrawImage(Image, Pos.X, Pos.Y, Size.Width, Size.Height);
+            if(isVisible)
+                GameForm.Buffer.Graphics.DrawImage(Image, Pos.X, Pos.Y, Size.Width, Size.Height);
         }
 
         public void Move(Point cursorPos)
         {
             Pos = cursorPos;
-            /*if (cursorPos != Pos)
-            {
-                if(cursorPos.X < Pos.X)
-                    Pos.X -= MoveSpeed;
-                if (cursorPos.X > Pos.X)
-                    Pos.X += MoveSpeed;
-                if (cursorPos.Y < Pos.Y)
-                    Pos.Y -= MoveSpeed;
-                if (cursorPos.Y > Pos.Y)
-                    Pos.Y += MoveSpeed;
-            }*/
-            if (Pos.X > Game.FieldConstraint.Right) Pos.X = Game.FieldConstraint.Right;
-            if (Pos.X < Game.FieldConstraint.Left) Pos.X = Game.FieldConstraint.Left;
-            if (Pos.Y > Game.FieldConstraint.Bottom) Pos.Y = Game.FieldConstraint.Bottom;
-            if (Pos.Y < Game.FieldConstraint.Top) Pos.Y = Game.FieldConstraint.Top;
+            if (Pos.X > GameForm.FieldConstraint.Right) Pos.X = GameForm.FieldConstraint.Right;
+            if (Pos.X < GameForm.FieldConstraint.Left) Pos.X = GameForm.FieldConstraint.Left;
+            if (Pos.Y > GameForm.FieldConstraint.Bottom) Pos.Y = GameForm.FieldConstraint.Bottom;
+            if (Pos.Y < GameForm.FieldConstraint.Top) Pos.Y = GameForm.FieldConstraint.Top;
 
         }
 
@@ -85,5 +125,7 @@ namespace CSharpP2_Homework_1
         {
             Shoot();
         }
+
+
     }
 }

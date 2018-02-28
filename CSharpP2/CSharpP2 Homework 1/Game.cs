@@ -9,27 +9,50 @@ using System.IO;
 
 namespace CSharpP2_Homework_1
 {
-    static class Game
+    class Game
     {
-        private static BufferedGraphicsContext _context;
-        public static BufferedGraphics Buffer;
-        public static List<GameObject> gameObjects;
-        public static Player player;
-        public static Form f;
-        static Timer timer;
-        public static Random rnd = new Random((int)DateTime.Now.Ticks);
+        
 
-        static int asteroidsRespawnTime;
-        static int maxAsteroidCount;
-        static int asteroidsCount;
+        private BufferedGraphicsContext _context;
+        public BufferedGraphics Buffer { get; private set; }
+        public List<GameObject> gameObjects;
+        public Player player;
+        public Form f;
+        static Timer renderer;
+        public Random Rnd { get => new Random((int)DateTime.Now.Ticks & 0x0000FFFF); }
 
-        public static Constraint FieldConstraint { get; private set; }
+        
 
-        public static int Width { get; set; }
-        public static int Height { get; set; }
+        int asteroidsRespawnTime;
+        int maxAsteroidCount;
+        int asteroidsCount;
 
+        public Constraint FieldConstraint { get; private set; }
 
-        static Game() { }
+        public int Width { get; set; }
+        public int Height { get; set; }
+
+        public Game() { }
+        public void Init(Form form) {
+            f = form;
+            Graphics g;
+            _context = BufferedGraphicsManager.Current;
+            g = form.CreateGraphics();
+
+            Width = form.Width;
+            Height = form.Height;
+            FieldConstraint = new Constraint(0, Width, 0, Height);
+
+            asteroidsRespawnTime = 0;
+            maxAsteroidCount = 10;
+
+            Buffer = _context.Allocate(g, new Rectangle(0, 0, Width, Height));
+            Load();
+
+            renderer = new Timer { Interval = 10 };
+            renderer.Start();
+            renderer.Tick += OnFrameUpdate;
+        }
 
         public struct Constraint
         {
@@ -49,52 +72,21 @@ namespace CSharpP2_Homework_1
 
 
         /// <summary>
-        /// Инициализирует экранную форму
-        /// </summary>
-        /// <param name="form">Инициализируемая форма</param>
-        public static void Init(Form form)
-        {
-            f = form;
-            Graphics g;
-            _context = BufferedGraphicsManager.Current;
-            g = form.CreateGraphics();
-
-            Width = form.Width;
-            Height = form.Height;
-            FieldConstraint = new Constraint(0, Width, 0, Height);
-
-            asteroidsRespawnTime = 0;
-            maxAsteroidCount = 10;
-
-            Buffer = _context.Allocate(g, new Rectangle(0, 0, Width, Height));
-            Load();
-
-            form.MouseDown += player.ShootCurrentWeapon;
-
-            timer = new Timer { Interval = 10 };
-            timer.Start();
-            timer.Tick += Timer_Tick;
-
-        }
-
-        /// <summary>
         /// Отрисовывает игровые объекты
         /// </summary>
-        public static void Draw()
+        public void Draw()
         {
             Buffer.Graphics.Clear(Color.Black);
-            foreach (GameObject go in gameObjects)
-                go.Draw();
+            for (int i = 0; i < gameObjects.Count; i++) gameObjects[i].Draw();
             player.Draw();
             Buffer.Render();
-
         }
 
         /// <summary>
         /// Получает позицию курсора и приводит ее к клиентским координатам
         /// </summary>
         /// <returns>Позиция курсора в клиентских координатах</returns>
-        static Point GetCursorPos()
+        Point GetCursorPos()
         {
             Point cursorPos = Cursor.Position;
             cursorPos = (f as Control).PointToClient(cursorPos);
@@ -104,9 +96,9 @@ namespace CSharpP2_Homework_1
         /// <summary>
         /// Обновляет позиции объектов
         /// </summary>
-        public static void Update()
+        public void Update()
         {
-            asteroidsCount = gameObjects.FindAll(delegate (GameObject obj)
+            this.asteroidsCount = gameObjects.FindAll(delegate (GameObject obj)
            {
                return obj.GetType() == typeof(Asteroid);
            }).Count;
@@ -119,21 +111,20 @@ namespace CSharpP2_Homework_1
 
         }
 
-        private static void SpawnAsteroids()
+        private void SpawnAsteroids()
         {
             if (asteroidsRespawnTime <= 0 && asteroidsCount < maxAsteroidCount)
             {
                 gameObjects.Add(new Asteroid());
-                asteroidsRespawnTime = rnd.Next(0, 3);
+                asteroidsRespawnTime = Rnd.Next(0, 3);
             }
             else --asteroidsRespawnTime;
-
         }
 
         /// <summary>
         /// Загружает игровые объекты
         /// </summary>
-        public static void Load()
+        public void Load()
         {
 
             player = new Player();
@@ -157,7 +148,7 @@ namespace CSharpP2_Homework_1
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void Timer_Tick(object sender, EventArgs e)
+        private void OnFrameUpdate(object sender, EventArgs e)
         {
             if (Buffer != null)
             {
@@ -170,7 +161,7 @@ namespace CSharpP2_Homework_1
         /// <summary>
         /// Удаляет все объекты помеченные к удалению
         /// </summary>
-        static void ClearObjects()
+        void ClearObjects()
         {
             gameObjects.RemoveAll(x=>x.Destroyed);
         }
@@ -179,7 +170,7 @@ namespace CSharpP2_Homework_1
         /// Добавляет объект в игру
         /// </summary>
         /// <param name="obj"></param>
-        public static void AddObjects(GameObject obj)
+        public void AddObjects(GameObject obj)
         {
             gameObjects.Add(obj);
         }
@@ -188,9 +179,9 @@ namespace CSharpP2_Homework_1
         /// Добавляет коллекцию объектов в игру
         /// </summary>
         /// <param name="objs"></param>
-        public static void AddObjects(List<GameObject> objs)
+        public void AddObjects(List<GameObject> objs)
         {
-            Game.gameObjects.AddRange(objs);
+            gameObjects.AddRange(objs);
         }
 
     }

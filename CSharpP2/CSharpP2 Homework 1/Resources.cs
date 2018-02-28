@@ -15,6 +15,7 @@ namespace CSharpP2_Homework_1
         static List<Image> planetsSkins;
         static List<Image> starsSkins;
         static List<Image> laserSkins;
+        static List<Image> batterySkins;
 
         public static List<Image> PlayerSkins {
             get
@@ -94,6 +95,22 @@ namespace CSharpP2_Homework_1
                 else
                 {
                     return laserSkins;
+                }
+            }
+        }
+        public static List<Image> BatterySkins
+        {
+            get
+            {
+                if (batterySkins == null)
+                {
+                    batterySkins = new List<Image>();
+                    LoadResources(batterySkins, "Battery");
+                    return batterySkins;
+                }
+                else
+                {
+                    return batterySkins;
                 }
             }
         }

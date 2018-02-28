@@ -4,7 +4,9 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace CSharpP2_Homework_1
 {
@@ -19,6 +21,19 @@ namespace CSharpP2_Homework_1
         protected Image Image;
         protected bool destroyed = false;
         public Rectangle Rect => new Rectangle(Pos, Size);
+        Game gameForm;
+        protected static Random Rnd { get => new Random((int)DateTime.Now.Ticks & 0x0000FFFF); }
+        public Game GameForm
+        {
+            get
+            {
+                return gameForm;
+            }
+            private set
+            {
+                gameForm = value;
+            }
+        }
 
         public bool Destroyed
         {
@@ -36,7 +51,14 @@ namespace CSharpP2_Homework_1
 
         public GameObject()
         {
-            Pos = new Point(0, Game.rnd.Next(0, Game.FieldConstraint.Top));
+            GameForm = Program.Game;
+            Pos = new Point(0, Rnd.Next(0, GameForm.FieldConstraint.Top));
+        }
+
+        public GameObject(Point pos)
+        {
+            GameForm = Program.Game;
+            Pos = pos;
         }
 
         public GameObject(Point pos, Point dir, Size size, String fileName)
@@ -63,7 +85,7 @@ namespace CSharpP2_Homework_1
         /// </summary>
         public virtual void Draw()
         {
-            Game.Buffer.Graphics.DrawEllipse(Pens.White, Pos.X, Pos.Y, Size.Width, Size.Height);
+            GameForm.Buffer.Graphics.DrawEllipse(Pens.White, Pos.X, Pos.Y, Size.Width, Size.Height);
         }
 
         /// <summary>
@@ -72,7 +94,7 @@ namespace CSharpP2_Homework_1
         public virtual void Update()
         {
             Pos.X = Pos.X + Dir.X;
-            if (Pos.X < 0) Pos.X = Game.Width + Size.Width;
+            if (Pos.X < 0) Pos.X = GameForm.Width + Size.Width;
         }     
 
         public void Dispose()
@@ -96,22 +118,27 @@ namespace CSharpP2_Homework_1
     class Star : GameObject
     {
         public Star() : base() {
-            Pos = new Point(Game.rnd.Next(0, Game.FieldConstraint.Right), Game.rnd.Next(0, Game.FieldConstraint.Bottom));
-            int size = Game.rnd.Next(1, 15);
+            
+            int X = Rnd.Next(0, GameForm.FieldConstraint.Right);
+            Thread.Sleep(1);
+            int Y = Rnd.Next(0, GameForm.FieldConstraint.Bottom);
+            Pos = new Point(X, Y);
+
+            int size = Rnd.Next(1, 15);
             Size = new Size(size, size);
             Dir = new Point(size, 0);
-            Image = Resources.StarsSkins[Game.rnd.Next(0, Resources.StarsSkins.Count)];
+            Image = Resources.StarsSkins[Rnd.Next(0, Resources.StarsSkins.Count)];
         }
 
         public override void Draw()
         {
-            Game.Buffer.Graphics.DrawImage(Image, Pos.X, Pos.Y , Size.Width, Size.Height);
+            GameForm.Buffer.Graphics.DrawImage(Image, Pos.X, Pos.Y , Size.Width, Size.Height);
         }
 
         public override void Update()
         {
             Pos.X = Pos.X - Dir.X;
-            if (Pos.X < 0) Pos.X = Game.Width + Size.Width;
+            if (Pos.X < 0) Pos = new Point(GameForm.FieldConstraint.Right, Rnd.Next(0, GameForm.FieldConstraint.Bottom)); 
         }
 
     }
@@ -123,23 +150,23 @@ namespace CSharpP2_Homework_1
     {
         public Planet() : base()
         {
-            int size = Game.rnd.Next(300, 400);
+            int size = Rnd.Next(300, 400);
             Size = new Size(size, size);
-            Pos = new Point(Game.rnd.Next(0, Game.FieldConstraint.Right), Game.rnd.Next(0, Game.FieldConstraint.Bottom));
+            Pos = new Point(Rnd.Next(0, GameForm.FieldConstraint.Right), Rnd.Next(0, GameForm.FieldConstraint.Bottom));
             Dir = new Point(size/200, 0);
             
-            Image = Resources.PlanetsSkins[Game.rnd.Next(0, Resources.PlanetsSkins.Count)];
+            Image = Resources.PlanetsSkins[Rnd.Next(0, Resources.PlanetsSkins.Count)];
         }
 
         public override void Draw()
         {
-            Game.Buffer.Graphics.DrawImage(Image, Pos.X, Pos.Y, Size.Width, Size.Height);
+            GameForm.Buffer.Graphics.DrawImage(Image, Pos.X, Pos.Y, Size.Width, Size.Height);
         }
 
         public override void Update()
         {
             Pos.X = Pos.X - Dir.X;
-            if (Pos.X < -Size.Width) Pos.X = Game.Width + Size.Width;
+            if (Pos.X < -Size.Width) Pos.X = GameForm.Width + Size.Width;
         }
     }
 
@@ -149,6 +176,8 @@ namespace CSharpP2_Homework_1
     class Projectile : GameObject, ICloneable
     {
         public int Speed { get; set; }
+
+        public int Damage { get; private set; }
         Weapon weapon;
         public Weapon Weapon
         {
@@ -163,8 +192,9 @@ namespace CSharpP2_Homework_1
             }
         }
 
-        public Projectile(int speed, Size size, Image image)
+        public Projectile(int damage, int speed, Size size, Image image)
         {
+            Damage = damage;
             Speed = speed;
             Size = new Size(50, 10);
             Image = image; //Resources.LaserSkins[Game.rnd.Next(0, Resources.LaserSkins.Count)];
@@ -178,18 +208,18 @@ namespace CSharpP2_Homework_1
         public override void Draw()
         {
             //Game.Buffer.Graphics.DrawLine(new Pen(Color.White, 2), Pos, new Point(Pos.X + 10, Pos.Y));
-            Game.Buffer.Graphics.DrawImage(Image, Pos.X, Pos.Y, Size.Width, Size.Height);
+            GameForm.Buffer.Graphics.DrawImage(Image, Pos.X, Pos.Y, Size.Width, Size.Height);
         }
 
         public override void Update()
         {
             Pos.X = Pos.X + Speed;
-            if (Pos.X > Game.Width) destroyed = true;
+            if (Pos.X > GameForm.Width) destroyed = true;
         }
 
         public object Clone()
         {
-            return new Projectile(this.Speed, this.Size, this.Image);
+            return new Projectile(this.Damage, this.Speed, this.Size, this.Image);
         }
 
         public void SetPos(Point pos)
@@ -198,42 +228,109 @@ namespace CSharpP2_Homework_1
         }
     }
 
-    class Asteroid : GameObject
+    class Asteroid : GameObject, IEnemy, IDroper
     {
-        int respawnTime = Game.rnd.Next(1, 5);
+        int hp;
+        int damage;
+        public GameObject item;
+
         public Asteroid() : base()
         {
-            Pos = new Point(Game.FieldConstraint.Right + Size.Width, Game.rnd.Next(0, Game.FieldConstraint.Bottom));
-            int size = Game.rnd.Next(30, 100);
+            Pos = new Point(GameForm.FieldConstraint.Right + Size.Width, Rnd.Next(0, GameForm.FieldConstraint.Bottom));
+            int size = Rnd.Next(30, 100);
             Size = new Size(size, size);
             Dir = new Point(size / 10, 0);
-            Image = Resources.AsteroidsSkins[Game.rnd.Next(0, Resources.AsteroidsSkins.Count)];
+            Image = Resources.AsteroidsSkins[Rnd.Next(0, Resources.AsteroidsSkins.Count)];
+            hp = 2 * size;
+            damage =  size / 2;
+
+
         }
+
+        public int Hp { get => hp; }
+        public int Damage { get => damage; }
+        public GameObject Item { get => item; set => item = value; }
 
         public override void Draw()
         {
-            foreach (GameObject go in Game.gameObjects)
+            
+            foreach (GameObject go in GameForm.gameObjects)
             {
                 if(go.GetType() == typeof(Projectile))
                 {
                     if (Collision(go))
                     {
-                        Destroyed = true;
+                        System.Media.SystemSounds.Asterisk.Play();
+                        Hurt((go as Projectile).Damage);
                         go.Destroyed = true;
                     }
-                }
-                
+                }    
             }
-            Game.Buffer.Graphics.DrawImage(Image, Pos.X, Pos.Y, Size.Width, Size.Height);
+            if (Collision(GameForm.player)) GameForm.player.Hurt(damage);
+            if (hp < 0)
+            {
+                Drop();
+                Destroyed = true;
+            }
+
+            GameForm.Buffer.Graphics.DrawImage(Image, Pos.X, Pos.Y, Size.Width, Size.Height);
+        }
+
+        
+
+        public void Hurt(int n) => hp -= n;
+
+        public void SetDrop()
+        {
+            if (Rnd.Next(0, 100) < 20)
+                item = new Battery(Pos);
+        }
+
+        public void Drop()
+        {
+            SetDrop();
+            if (Item != null)
+                GameForm.AddObjects(Item);
         }
 
         public override void Update()
         {
             Pos.X = Pos.X - Dir.X;
             if (Pos.X < -Size.Width) destroyed = true;
-            int o = 10;
-            o--;
-            o = o - 1;
         }
+    }
+
+
+    class Battery : GameObject
+    {
+        int energy = 50;
+
+        public Battery (Point pos) : base(pos)
+        {
+            Size = new Size(30, 30);
+            Dir = new Point(10, 0);
+            Image = Resources.BatterySkins.First();
+        }
+
+
+        public override void Draw()
+        {
+
+            if (Collision(GameForm.player))
+            {
+                GameForm.player.Heal(energy);
+                destroyed = true;
+            }
+
+            GameForm.Buffer.Graphics.DrawImage(Image, Pos.X, Pos.Y, Size.Width, Size.Height);
+        }
+
+
+        public override void Update()
+        {
+            Pos.X = Pos.X - Dir.X;
+            if (Pos.X < -Size.Width) destroyed = true;
+        }
+
     }
 }

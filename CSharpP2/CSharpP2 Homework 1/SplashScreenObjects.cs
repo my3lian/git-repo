@@ -12,6 +12,7 @@ namespace CSharpP2_Homework_1
         protected Point Dir;
         protected Size Size;
         protected Image Image;
+        protected Random rnd = new Random((int)DateTime.Now.Ticks);
 
         public SplashScreenObjects(Point pos, Point dir, Size size, String fileName)
         {
@@ -39,7 +40,7 @@ namespace CSharpP2_Homework_1
     class SPStar : SplashScreenObjects
     {
         public SPStar(Point pos, Point dir, Size size, string fileName) : base(pos, dir, size, fileName) {
-            Image = Resources.StarsSkins[Game.rnd.Next(0, Resources.StarsSkins.Count)];
+            Image = Resources.StarsSkins[rnd.Next(0, Resources.StarsSkins.Count)];
         }
 
         public override void Draw()
@@ -58,7 +59,7 @@ namespace CSharpP2_Homework_1
     class SPPlanet : SplashScreenObjects
     {
         public SPPlanet(Point pos, Point dir, Size size, string fileName) : base(pos, dir, size, fileName) {
-            Image = Resources.PlanetsSkins[Game.rnd.Next(0, Resources.PlanetsSkins.Count)];
+            Image = Resources.PlanetsSkins[rnd.Next(0, Resources.PlanetsSkins.Count)];
         }
 
         public override void Draw()
