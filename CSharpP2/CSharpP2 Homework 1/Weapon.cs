@@ -24,8 +24,8 @@ namespace CSharpP2_Homework_1
         int timer = 0;
 
 
-        Player weaponHolder;
-        public Player WeaponHolder
+        Ship weaponHolder;
+        public Ship WeaponHolder
         {
             private get
             {

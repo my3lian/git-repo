@@ -11,49 +11,34 @@ namespace CSharpP2_Homework_1
 {
     class Game
     {
-        
-
-        private BufferedGraphicsContext _context;
-        public BufferedGraphics Buffer { get; private set; }
-        public List<GameObject> gameObjects;
-        public Player player;
-        public Form f;
-        static Timer renderer;
-        public Random Rnd { get => new Random((int)DateTime.Now.Ticks & 0x0000FFFF); }
-
-        
-
         int asteroidsRespawnTime;
         int maxAsteroidCount;
         int asteroidsCount;
+        int score;
 
+        GameUI UI;
+        BufferedGraphicsContext _context;
+        Timer renderer;
+
+        public event Action ScoreChanged;
+
+        public List<GameObject> gameObjects;
+        public Ship player;
+        public Form f;
+
+        public Random Rnd { get => new Random((int)DateTime.Now.Ticks & 0x0000FFFF); }
+        public BufferedGraphics Buffer { get; private set; }
+        public int Score { get => score; }
         public Constraint FieldConstraint { get; private set; }
-
         public int Width { get; set; }
         public int Height { get; set; }
 
-        public Game() { }
-        public void Init(Form form) {
-            f = form;
-            Graphics g;
-            _context = BufferedGraphicsManager.Current;
-            g = form.CreateGraphics();
+        public bool IsEnd { get; private set; }
 
-            Width = form.Width;
-            Height = form.Height;
-            FieldConstraint = new Constraint(0, Width, 0, Height);
 
-            asteroidsRespawnTime = 0;
-            maxAsteroidCount = 10;
-
-            Buffer = _context.Allocate(g, new Rectangle(0, 0, Width, Height));
-            Load();
-
-            renderer = new Timer { Interval = 10 };
-            renderer.Start();
-            renderer.Tick += OnFrameUpdate;
-        }
-
+        /// <summary>
+        /// Ограничение игрового поля
+        /// </summary>
         public struct Constraint
         {
             public int Top { get; set; }
@@ -70,6 +55,57 @@ namespace CSharpP2_Homework_1
             }
         }
 
+        public Game() { }
+
+        /// <summary>
+        /// Инициализация игры
+        /// </summary>
+        /// <param name="form"></param>
+        public void Init(Form form) {
+            Graphics g = form.CreateGraphics();
+            f = form;
+            _context = BufferedGraphicsManager.Current;
+            
+
+            Width = form.Width;
+            Height = form.Height;
+            Buffer = _context.Allocate(g, new Rectangle(0, 0, Width, Height));
+            FieldConstraint = new Constraint(0, Width, 0, Height);
+
+            renderer = new Timer { Interval = 1 };
+            renderer.Start();
+            renderer.Tick += OnUpdate;
+
+
+            asteroidsRespawnTime = 0;
+            maxAsteroidCount = 10;
+
+            score = 0;
+            UI = new GameUI();
+            Load();
+            UI.Init();
+
+            player.OnDie += GameOver;
+        }
+
+        /// <summary>
+        /// Завершает игру
+        /// </summary>
+        private void GameOver()
+        {
+            renderer.Stop();
+            Buffer.Graphics.DrawString("Игра окончена", new Font(FontFamily.GenericSansSerif, 24.0f, FontStyle.Bold), Brushes.AliceBlue, new Point(Width/2-50, Height/2));
+            Timer gameOver = new Timer { Interval = 5000 };
+            gameOver.Tick += CloseApplication;
+            gameOver.Start();
+        }
+
+        private void CloseApplication(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+
 
         /// <summary>
         /// Отрисовывает игровые объекты
@@ -78,8 +114,9 @@ namespace CSharpP2_Homework_1
         {
             Buffer.Graphics.Clear(Color.Black);
             for (int i = 0; i < gameObjects.Count; i++) gameObjects[i].Draw();
+            UI.Draw();
             player.Draw();
-            Buffer.Render();
+            Buffer.Render();            
         }
 
         /// <summary>
@@ -98,19 +135,20 @@ namespace CSharpP2_Homework_1
         /// </summary>
         public void Update()
         {
-            this.asteroidsCount = gameObjects.FindAll(delegate (GameObject obj)
-           {
-               return obj.GetType() == typeof(Asteroid);
-           }).Count;
+            asteroidsCount = gameObjects.FindAll(delegate (GameObject obj)
+            {
+                   return obj.GetType() == typeof(Asteroid);
+            }).Count;
 
             foreach (GameObject go in gameObjects)
                 go.Update();
             player.Move(GetCursorPos());
-
             SpawnAsteroids();
-
         }
 
+        /// <summary>
+        /// Спавнит астероиды если их меньше максимального количества
+        /// </summary>
         private void SpawnAsteroids()
         {
             if (asteroidsRespawnTime <= 0 && asteroidsCount < maxAsteroidCount)
@@ -127,7 +165,7 @@ namespace CSharpP2_Homework_1
         public void Load()
         {
 
-            player = new Player();
+            player = new Ship();
 
             gameObjects = new List<GameObject>();
 
@@ -148,7 +186,7 @@ namespace CSharpP2_Homework_1
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnFrameUpdate(object sender, EventArgs e)
+        private void OnUpdate(object sender, EventArgs e)
         {
             if (Buffer != null)
             {
@@ -182,6 +220,16 @@ namespace CSharpP2_Homework_1
         public void AddObjects(List<GameObject> objs)
         {
             gameObjects.AddRange(objs);
+        }
+
+        /// <summary>
+        /// Увеличивает счет
+        /// </summary>
+        /// <param name="value">Значение</param>
+        public void SetScore(int value)
+        {
+            score += value;
+            ScoreChanged();
         }
 
     }

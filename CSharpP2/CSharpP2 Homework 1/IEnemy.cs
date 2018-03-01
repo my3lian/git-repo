@@ -11,5 +11,6 @@ namespace CSharpP2_Homework_1
         int Hp { get;}
         void Hurt(int n);
         int Damage { get;}
+        int Points { get; }
     }
 }

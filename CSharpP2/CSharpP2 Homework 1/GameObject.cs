@@ -233,6 +233,7 @@ namespace CSharpP2_Homework_1
         int hp;
         int damage;
         public GameObject item;
+        int points;
 
         public Asteroid() : base()
         {
@@ -243,13 +244,15 @@ namespace CSharpP2_Homework_1
             Image = Resources.AsteroidsSkins[Rnd.Next(0, Resources.AsteroidsSkins.Count)];
             hp = 2 * size;
             damage =  size / 2;
-
+            points = size * 2;
 
         }
 
         public int Hp { get => hp; }
         public int Damage { get => damage; }
         public GameObject Item { get => item; set => item = value; }
+
+        public int Points { get => points; }
 
         public override void Draw()
         {
@@ -260,7 +263,8 @@ namespace CSharpP2_Homework_1
                 {
                     if (Collision(go))
                     {
-                        System.Media.SystemSounds.Asterisk.Play();
+                        System.Media.SystemSounds.Asterisk.Play();
+
                         Hurt((go as Projectile).Damage);
                         go.Destroyed = true;
                     }
@@ -271,6 +275,7 @@ namespace CSharpP2_Homework_1
             {
                 Drop();
                 Destroyed = true;
+                GameForm.SetScore(points);
             }
 
             GameForm.Buffer.Graphics.DrawImage(Image, Pos.X, Pos.Y, Size.Width, Size.Height);
@@ -279,6 +284,7 @@ namespace CSharpP2_Homework_1
         
 
         public void Hurt(int n) => hp -= n;
+
 
         public void SetDrop()
         {

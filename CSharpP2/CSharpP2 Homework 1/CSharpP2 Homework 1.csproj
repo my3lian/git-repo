@@ -45,12 +45,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Armory.cs" />
+    <Compile Include="GameUI.cs" />
     <Compile Include="IDroper.cs" />
     <Compile Include="IEnemy.cs" />
     <Compile Include="WeaponTypes.cs" />
     <Compile Include="GameObjectException.cs" />
     <Compile Include="ICollision.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="Ship.cs" />
     <Compile Include="Resources.cs" />
     <Compile Include="SplashScreenObjects.cs" />
     <Compile Include="GameObject.cs" />
