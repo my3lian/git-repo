@@ -1,0 +1,20 @@
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\obj\Debug\CSharpP2 Homework 5.csprojResolveAssemblyReference.cache
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\obj\Debug\MainWindow.g.cs
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\obj\Debug\CSharpP2 Homework 5_MarkupCompile.cache
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\obj\Debug\CSharpP2 Homework 5_MarkupCompile.lref
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\bin\Debug\CSharpP2 Homework 5.exe.config
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\bin\Debug\CSharpP2 Homework 5.exe
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\bin\Debug\CSharpP2 Homework 5.pdb
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\bin\Debug\MaterialDesignColors.dll
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\bin\Debug\MaterialDesignThemes.Wpf.dll
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\bin\Debug\MaterialDesignThemes.Wpf.pdb
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\bin\Debug\MaterialDesignThemes.Wpf.xml
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\obj\Debug\App.g.cs
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\obj\Debug\App.baml
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\obj\Debug\MainWindow.baml
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\obj\Debug\CSharpP2 Homework 5.g.resources
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\obj\Debug\CSharpP2_Homework_5.Properties.Resources.resources
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\obj\Debug\CSharpP2 Homework 5.csproj.GenerateResource.Cache
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\obj\Debug\CSharpP2 Homework 5.csproj.CoreCompileInputs.cache
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\obj\Debug\CSharpP2 Homework 5.exe
+C:\Users\Илья\source\repos\CSharpP2 Homework 5\CSharpP2 Homework 5\obj\Debug\CSharpP2 Homework 5.pdb
